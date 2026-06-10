@@ -6,134 +6,94 @@
 <title>심연의 던전 — Roguelike</title>
 <style>
   :root {
-    --bg: #0a0a0f;
-    --panel: #14141f;
-    --border: #2a2a3a;
-    --text: #c8c8d8;
-    --accent: #ffcc44;
-    --hp: #e04050;
-    --xp: #44aaff;
+    --bg: #0a0a0f; --panel: #14141f; --border: #2a2a3a;
+    --text: #c8c8d8; --accent: #ffcc44; --hp: #e04050; --xp: #44aaff; --mp:#5577ff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: "Courier New", Courier, monospace;
-    height: 100%;
-    overflow: hidden;
-    -webkit-user-select: none;
-    user-select: none;
+    height: 100%; overflow: hidden;
+    -webkit-user-select: none; user-select: none;
   }
-  #app {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-    padding: 12px;
-    gap: 10px;
-  }
-  h1 {
-    color: var(--accent);
-    font-size: 20px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 8px rgba(255,204,68,0.4);
-  }
-  #game-wrap {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  #app { display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100%; padding:12px; gap:10px; }
+  h1 { color:var(--accent); font-size:20px; letter-spacing:2px;
+    text-shadow:0 0 8px rgba(255,204,68,0.4); }
+  #game-wrap { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
   #board {
-    background: #000;
-    border: 2px solid var(--border);
-    border-radius: 6px;
-    line-height: 1.0;
-    font-size: 18px;
-    letter-spacing: 1px;
-    white-space: pre;
-    box-shadow: 0 0 24px rgba(0,0,0,0.8);
-    padding: 8px;
+    background:#000; border:2px solid var(--border); border-radius:6px;
+    line-height:1.0; font-size:18px; letter-spacing:1px; white-space:pre;
+    box-shadow:0 0 24px rgba(0,0,0,0.8); padding:8px; outline:none; cursor:pointer;
   }
-  #board span { display: inline-block; width: 1ch; text-align: center; }
+  #board span { display:inline-block; width:1ch; text-align:center; }
   #sidebar {
-    width: 240px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px;
-    font-size: 13px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    width:240px; background:var(--panel); border:1px solid var(--border);
+    border-radius:6px; padding:14px; font-size:13px; display:flex; flex-direction:column; gap:9px;
   }
-  .stat-row { display: flex; justify-content: space-between; }
-  .bar { height: 10px; background: #000; border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
-  .bar > div { height: 100%; transition: width 0.15s; }
-  .bar.hp > div { background: linear-gradient(90deg, #ff6070, var(--hp)); }
-  .bar.xp > div { background: linear-gradient(90deg, #66ccff, var(--xp)); }
-  .label { color: #888; }
-  .val { color: var(--accent); }
+  .stat-row { display:flex; justify-content:space-between; }
+  .bar { height:10px; background:#000; border-radius:5px; overflow:hidden; border:1px solid var(--border); }
+  .bar > div { height:100%; transition:width 0.15s; }
+  .bar.hp > div { background:linear-gradient(90deg,#ff6070,var(--hp)); }
+  .bar.xp > div { background:linear-gradient(90deg,#66ccff,var(--xp)); }
+  .bar.mp > div { background:linear-gradient(90deg,#88aaff,var(--mp)); }
+  .label { color:#888; } .val { color:var(--accent); }
+  .skill-box { background:#0d0d16; border:1px solid var(--border); border-radius:5px; padding:7px 9px; }
+  .skill-box .sk-name { color:#88ddff; font-weight:bold; }
+  .skill-box .sk-desc { color:#778; font-size:11px; margin-top:3px; }
   #log {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px 14px;
-    width: 100%;
-    max-width: 740px;
-    height: 110px;
-    overflow-y: auto;
-    font-size: 13px;
-    line-height: 1.5;
+    background:var(--panel); border:1px solid var(--border); border-radius:6px;
+    padding:10px 14px; width:100%; max-width:760px; height:110px;
+    overflow-y:auto; font-size:13px; line-height:1.5;
   }
-  #log div { margin-bottom: 2px; }
-  .log-dmg { color: #ff8080; }
-  .log-good { color: #80ff80; }
-  .log-info { color: #88aacc; }
-  .log-warn { color: var(--accent); }
-  #help {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
-    max-width: 740px;
-  }
-  kbd {
-    background: #222; border: 1px solid #444; border-radius: 3px;
-    padding: 1px 5px; color: #ccc; font-size: 11px;
-  }
-  #overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.88);
-    display: none;
-    align-items: center; justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
-    z-index: 10;
-  }
-  #overlay.show { display: flex; }
-  #overlay h2 { font-size: 32px; letter-spacing: 3px; }
-  #overlay p { color: #aaa; font-size: 14px; }
-  #overlay button {
-    background: var(--accent); color: #000; border: none;
-    padding: 10px 28px; font-family: inherit; font-weight: bold;
-    font-size: 15px; border-radius: 6px; cursor: pointer; letter-spacing: 1px;
-  }
-  #overlay button:hover { filter: brightness(1.1); }
-  .mobile-controls { display: none; gap: 6px; flex-direction: column; align-items: center; margin-top: 8px; }
-  .mobile-controls .row { display: flex; gap: 6px; }
-  .mobile-controls button {
-    width: 52px; height: 52px; font-size: 20px;
-    background: var(--panel); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    font-family: inherit; cursor: pointer;
-  }
-  .mobile-controls button:active { background: var(--border); }
-  @media (hover: none) and (pointer: coarse) {
-    .mobile-controls { display: flex; }
-    #board { font-size: 15px; }
+  #log div { margin-bottom:2px; }
+  .log-dmg{color:#ff8080;} .log-good{color:#80ff80;} .log-info{color:#88aacc;}
+  .log-warn{color:var(--accent);} .log-magic{color:#cc88ff;} .log-boss{color:#ff5588;font-weight:bold;}
+  #help { font-size:12px; color:#666; text-align:center; max-width:760px; line-height:1.7; }
+  kbd { background:#222; border:1px solid #444; border-radius:3px; padding:1px 5px; color:#ccc; font-size:11px; }
+  #overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92);
+    display:none; align-items:center; justify-content:center; flex-direction:column;
+    gap:14px; text-align:center; z-index:10; padding:20px; overflow-y:auto; }
+  #overlay.show { display:flex; }
+  #overlay h2 { font-size:30px; letter-spacing:3px; color:var(--accent); }
+  #overlay p { color:#aaa; font-size:14px; max-width:520px; line-height:1.6; }
+  .class-grid { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:600px; }
+  .class-card { background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:14px; width:135px; cursor:pointer; transition:.15s; text-align:left; }
+  .class-card:hover { border-color:var(--accent); transform:translateY(-3px); }
+  .class-card .cc-icon { font-size:24px; }
+  .class-card .cc-name { color:var(--accent); font-weight:bold; margin:4px 0; }
+  .class-card .cc-stat { font-size:11px; color:#99a; line-height:1.5; }
+  .menu-btn { background:var(--accent); color:#000; border:none; padding:10px 28px;
+    font-family:inherit; font-weight:bold; font-size:15px; border-radius:6px; cursor:pointer; letter-spacing:1px; }
+  .menu-btn:hover { filter:brightness(1.1); }
+  .menu-btn.alt { background:var(--panel); color:var(--text); border:1px solid var(--border); }
+  #scores { font-size:12px; color:#99a; }
+  #scores .sc-row { display:flex; justify-content:space-between; gap:18px; padding:2px 0; min-width:280px; }
+  /* 상점 */
+  #shop { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none;
+    align-items:center; justify-content:center; z-index:11; }
+  #shop.show { display:flex; }
+  .shop-panel { background:var(--panel); border:2px solid var(--accent); border-radius:10px;
+    padding:22px; width:380px; max-width:92vw; }
+  .shop-panel h3 { color:var(--accent); margin-bottom:6px; }
+  .shop-gold { color:#ffd24a; font-size:13px; margin-bottom:12px; }
+  .shop-item { display:flex; justify-content:space-between; align-items:center;
+    padding:9px 10px; border:1px solid var(--border); border-radius:6px; margin-bottom:7px; }
+  .shop-item .si-info { font-size:12px; }
+  .shop-item .si-info b { color:#cde; }
+  .shop-item .si-info small { color:#778; }
+  .shop-item button { background:var(--accent); color:#000; border:none; border-radius:5px;
+    padding:6px 12px; font-family:inherit; font-weight:bold; cursor:pointer; font-size:12px; }
+  .shop-item button:disabled { background:#333; color:#666; cursor:not-allowed; }
+  .mobile-controls { display:none; gap:6px; flex-direction:column; align-items:center; margin-top:8px; }
+  .mobile-controls .row { display:flex; gap:6px; }
+  .mobile-controls button { width:50px; height:50px; font-size:18px; background:var(--panel);
+    color:var(--text); border:1px solid var(--border); border-radius:8px; font-family:inherit; cursor:pointer; }
+  .mobile-controls button:active { background:var(--border); }
+  @media (hover:none) and (pointer:coarse) {
+    .mobile-controls { display:flex; }
+    #board { font-size:14px; }
   }
 </style>
 </head>
@@ -141,12 +101,16 @@
 <div id="app">
   <h1>⚔ 심연의 던전 ⚔</h1>
   <div id="game-wrap">
-    <div id="board" aria-label="dungeon"></div>
+    <div id="board" tabindex="0" aria-label="dungeon"></div>
     <div id="sidebar">
-      <div class="stat-row"><span class="label">탐험가</span><span class="val" id="s-depth">B1</span></div>
+      <div class="stat-row"><span class="label" id="s-class">전사</span><span class="val" id="s-depth">B1층</span></div>
       <div>
         <div class="stat-row"><span class="label">HP</span><span class="val" id="s-hp">20/20</span></div>
         <div class="bar hp"><div id="bar-hp" style="width:100%"></div></div>
+      </div>
+      <div id="mp-wrap">
+        <div class="stat-row"><span class="label">MP</span><span class="val" id="s-mp">0/0</span></div>
+        <div class="bar mp"><div id="bar-mp" style="width:0%"></div></div>
       </div>
       <div>
         <div class="stat-row"><span class="label">EXP</span><span class="val" id="s-xp">Lv.1</span></div>
@@ -157,274 +121,348 @@
       <div class="stat-row"><span class="label">금화</span><span class="val" id="s-gold">0</span></div>
       <div class="stat-row"><span class="label">물약</span><span class="val" id="s-pot">0</span></div>
       <div class="stat-row"><span class="label">처치</span><span class="val" id="s-kill">0</span></div>
+      <div class="skill-box">
+        <div class="stat-row"><span class="sk-name" id="s-skname">스킬</span><span class="val" id="s-skcd"></span></div>
+        <div class="sk-desc" id="s-skdesc"></div>
+      </div>
     </div>
   </div>
   <div id="log"></div>
   <div id="help">
-    이동 <kbd>WASD</kbd> / <kbd>화살표</kbd> · 대기 <kbd>Space</kbd> · 물약 <kbd>Q</kbd> · 계단 <kbd>&gt;</kbd>(자동) · 적과 부딪혀 공격
+    이동 <kbd>WASD</kbd>/<kbd>화살표</kbd> · 대기 <kbd>Space</kbd> · 스킬 <kbd>E</kbd> · 물약 <kbd>Q</kbd> · 적과 부딪혀 공격<br>
+    <kbd>M</kbd> 칸으로 가면 상점 · <kbd>&gt;</kbd> 계단으로 다음 층
   </div>
   <div class="mobile-controls">
-    <div class="row"><button data-dir="up">↑</button></div>
+    <div class="row"><button data-act="up">↑</button></div>
     <div class="row">
-      <button data-dir="left">←</button>
-      <button data-dir="wait">·</button>
-      <button data-dir="right">→</button>
+      <button data-act="left">←</button>
+      <button data-act="wait">·</button>
+      <button data-act="right">→</button>
     </div>
-    <div class="row"><button data-dir="down">↓</button></div>
-    <div class="row"><button data-dir="potion" style="width:auto;padding:0 14px;">물약 마시기</button></div>
+    <div class="row"><button data-act="down">↓</button></div>
+    <div class="row">
+      <button data-act="skill" style="width:auto;padding:0 12px;">스킬(E)</button>
+      <button data-act="potion" style="width:auto;padding:0 12px;">물약(Q)</button>
+    </div>
   </div>
 </div>
 
-<div id="overlay">
-  <h2 id="ov-title"></h2>
-  <p id="ov-text"></p>
-  <button id="ov-btn">다시 도전</button>
+<!-- 시작/사망/직업선택 오버레이 -->
+<div id="overlay" class="show">
+  <h2 id="ov-title">심연의 던전</h2>
+  <p id="ov-text">직업을 선택하고 던전으로 내려가라. 더 깊이, 더 깊이.</p>
+  <div class="class-grid" id="class-grid"></div>
+  <div id="scores"></div>
+</div>
+
+<!-- 상점 -->
+<div id="shop">
+  <div class="shop-panel">
+    <h3>🛒 떠돌이 상인</h3>
+    <div class="shop-gold">보유 금화: <span id="shop-gold">0</span></div>
+    <div id="shop-items"></div>
+    <button class="menu-btn" id="shop-close" style="width:100%;margin-top:6px;">나가기 (Esc)</button>
+  </div>
 </div>
 
 <script>
 "use strict";
-// ===================== 심연의 던전 — 절차적 로그라이크 =====================
-// 단일 파일 / 의존성 없음. 시야(FOV), 던전 생성(BSP방 + 복도),
-// 몬스터 AI, 전투, 아이템, 층 진행을 포함.
+// ===================== 심연의 던전 v2 — 절차적 로그라이크 =====================
+// 추가: 직업 4종 / 스킬·마나 / 상점 / 보스층 / 점수 기록(localStorage)
+// 단일 파일, 의존성 없음.
 
-const W = 48, H = 24;          // 던전 격자 크기
-const TILE = { WALL:0, FLOOR:1, STAIRS:2 };
+const W = 48, H = 24;
+const TILE = { WALL:0, FLOOR:1, STAIRS:2, SHOP:3 };
 
-// 타일/엔티티 시각 정의
 const GLYPH = {
-  wall:  { ch:'#',  color:'#3a3a4a', dim:'#1a1a24' },
-  floor: { ch:'·',  color:'#444',    dim:'#222'    },
-  stairs:{ ch:'>',  color:'#ffcc44', dim:'#776622' },
-  player:{ ch:'@',  color:'#ffffff' },
-  gold:  { ch:'$',  color:'#ffd24a' },
-  potion:{ ch:'!',  color:'#ff66cc' },
-  weapon:{ ch:'/',  color:'#66ddff' },
-  armor: { ch:'[',  color:'#aaccff' },
+  wall:  { ch:'#', color:'#3a3a4a', dim:'#1a1a24' },
+  floor: { ch:'·', color:'#444',    dim:'#222'    },
+  stairs:{ ch:'>', color:'#ffcc44', dim:'#776622' },
+  shop:  { ch:'M', color:'#44ff99', dim:'#226644' },
+  player:{ ch:'@', color:'#ffffff' },
+  gold:  { ch:'$', color:'#ffd24a' },
+  potion:{ ch:'!', color:'#ff66cc' },
+  weapon:{ ch:'/', color:'#66ddff' },
+  armor: { ch:'[', color:'#aaccff' },
 };
 
-// 몬스터 종류 (층이 깊어질수록 강한 놈 등장)
+// ---------- 직업 ----------
+const CLASSES = {
+  warrior: { name:'전사', icon:'🛡️', hp:30, atk:[3,5], def:3, mana:0,
+    skill:{ name:'강타', cost:0, cd:5, range:1, desc:'인접 적에게 3배 피해' } },
+  archer:  { name:'궁수', icon:'🏹', hp:22, atk:[3,6], def:1, mana:12,
+    skill:{ name:'관통사격', cost:3, cd:1, range:7, desc:'직선상의 모든 적을 관통 사격' } },
+  mage:    { name:'마법사', icon:'🔮', hp:16, atk:[2,4], def:0, mana:24,
+    skill:{ name:'화염구', cost:6, cd:0, range:7, desc:'시야 내 적과 주변에 광역 화염' } },
+  rogue:   { name:'도적', icon:'🗡️', hp:24, atk:[4,6], def:1, mana:8,
+    skill:{ name:'암습', cost:3, cd:3, range:6, desc:'적에게 순간이동 후 치명타(2.5배)' } },
+};
+
 const MONSTERS = [
-  { name:'쥐',       ch:'r', color:'#aa8866', hp:4,  atk:[1,2], def:0, xp:2,  speed:1, minDepth:1 },
-  { name:'박쥐',     ch:'b', color:'#9966cc', hp:6,  atk:[2,3], def:0, xp:3,  speed:1, minDepth:1, erratic:true },
-  { name:'고블린',   ch:'g', color:'#66cc66', hp:10, atk:[3,5], def:1, xp:6,  speed:1, minDepth:2 },
-  { name:'해골병',   ch:'s', color:'#dddddd', hp:14, atk:[4,6], def:2, xp:10, speed:1, minDepth:3 },
-  { name:'오크',     ch:'o', color:'#88aa44', hp:20, atk:[5,8], def:3, xp:16, speed:1, minDepth:4 },
-  { name:'트롤',     ch:'T', color:'#44aa88', hp:32, atk:[7,11],def:4, xp:28, speed:1, minDepth:6, regen:1 },
-  { name:'리치',     ch:'L', color:'#cc44ff', hp:28, atk:[9,13],def:5, xp:40, speed:1, minDepth:8 },
+  { name:'쥐',     ch:'r', color:'#aa8866', hp:4,  atk:[1,2], def:0, xp:2,  minDepth:1 },
+  { name:'박쥐',   ch:'b', color:'#9966cc', hp:6,  atk:[2,3], def:0, xp:3,  minDepth:1, erratic:true },
+  { name:'고블린', ch:'g', color:'#66cc66', hp:10, atk:[3,5], def:1, xp:6,  minDepth:2 },
+  { name:'해골병', ch:'s', color:'#dddddd', hp:14, atk:[4,6], def:2, xp:10, minDepth:3 },
+  { name:'오크',   ch:'o', color:'#88aa44', hp:20, atk:[5,8], def:3, xp:16, minDepth:4 },
+  { name:'트롤',   ch:'T', color:'#44aa88', hp:32, atk:[7,11],def:4, xp:28, minDepth:6, regen:1 },
+  { name:'리치',   ch:'L', color:'#cc44ff', hp:28, atk:[9,13],def:5, xp:40, minDepth:8 },
+];
+const BOSSES = [
+  { name:'고블린 왕',   ch:'K', color:'#ffaa00' },
+  { name:'언데드 군주', ch:'U', color:'#ff4488' },
+  { name:'심연의 마왕', ch:'Ω', color:'#cc33ff' },
 ];
 
-// 무기/방어구 풀 (랜덤 드랍)
 const WEAPONS = [
-  { name:'단검',   bonus:[1,1], min:3 },
-  { name:'장검',   bonus:[2,3], min:3 },
-  { name:'전투도끼', bonus:[4,5], min:5 },
-  { name:'룬소드', bonus:[6,8], min:8 },
+  { name:'단검',     bonus:[1,1], min:1 },
+  { name:'장검',     bonus:[2,3], min:3 },
+  { name:'전투도끼',  bonus:[4,5], min:5 },
+  { name:'룬소드',   bonus:[6,8], min:8 },
 ];
 const ARMORS = [
-  { name:'가죽갑옷',   def:1, min:2 },
+  { name:'가죽갑옷',   def:1, min:1 },
   { name:'사슬갑옷',   def:2, min:4 },
   { name:'판금갑옷',   def:4, min:6 },
   { name:'용비늘갑옷', def:6, min:9 },
 ];
 
+const MAX_DEPTH = 15;  // B15 보스를 잡으면 클리어
+
 // ---------- 유틸 ----------
-const rnd = (n) => Math.floor(Math.random() * n);
-const randint = (a, b) => a + rnd(b - a + 1);
+const rnd = (n) => Math.floor(Math.random()*n);
+const randint = (a,b) => a + rnd(b-a+1);
 const choice = (arr) => arr[rnd(arr.length)];
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const key = (x, y) => y * W + x;
+const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+const key = (x,y) => y*W + x;
 
-// ---------- 게임 상태 ----------
-let map, visible, seen, entities, items, stairs, player, depth, gameOver, kills;
+// ---------- 상태 ----------
+let map, visible, seen, entities, items, stairs, shopPos, player, depth, gameOver, kills, turnCount, paused;
 
-function newPlayer() {
+function newPlayer(classId) {
+  const c = CLASSES[classId];
   return {
-    x: 0, y: 0, hp: 20, maxHp: 20,
-    atk: [3, 5], baseAtk: [3, 5], def: 0, baseDef: 0,
-    level: 1, xp: 0, xpNext: 10,
-    gold: 0, potions: 1,
-    weapon: null, armor: null,
+    classId, className:c.name,
+    x:0, y:0, hp:c.hp, maxHp:c.hp,
+    baseAtk:[...c.atk], atk:[...c.atk],
+    baseDef:c.def, def:c.def,
+    mana:c.mana, maxMana:c.mana,
+    skill:c.skill, skillCd:0,
+    level:1, xp:0, xpNext:10,
+    gold:0, potions:1,
+    weapon:null, armor:null,
   };
 }
 
 // ===================== 던전 생성 (BSP) =====================
 function genDungeon() {
-  map = new Uint8Array(W * H).fill(TILE.WALL);
-  visible = new Uint8Array(W * H);
-  seen = new Uint8Array(W * H);
-  entities = [];
-  items = [];
+  map = new Uint8Array(W*H).fill(TILE.WALL);
+  visible = new Uint8Array(W*H);
+  seen = new Uint8Array(W*H);
+  entities = []; items = []; shopPos = null;
 
-  // BSP 분할로 방 배치
   const rooms = [];
-  const root = { x:1, y:1, w:W-2, h:H-2 };
-  const leaves = [root];
+  const leaves = [{ x:1, y:1, w:W-2, h:H-2 }];
   const MIN = 7;
-  for (let i = 0; i < 5; i++) {
+  for (let i=0; i<5; i++) {
     const next = [];
     for (const node of leaves) {
       if (node.w > MIN*2 && node.h > MIN*2 && Math.random() < 0.85) {
-        if (node.w / node.h > 1.2 || (node.w > MIN*2 && Math.random() < 0.5)) {
-          const cut = randint(MIN, node.w - MIN);
-          next.push({ x:node.x, y:node.y, w:cut, h:node.h });
-          next.push({ x:node.x+cut, y:node.y, w:node.w-cut, h:node.h });
+        if (node.w/node.h > 1.2 || (node.w > MIN*2 && Math.random()<0.5)) {
+          const cut = randint(MIN, node.w-MIN);
+          next.push({x:node.x,y:node.y,w:cut,h:node.h});
+          next.push({x:node.x+cut,y:node.y,w:node.w-cut,h:node.h});
         } else if (node.h > MIN*2) {
-          const cut = randint(MIN, node.h - MIN);
-          next.push({ x:node.x, y:node.y, w:node.w, h:cut });
-          next.push({ x:node.x, y:node.y+cut, w:node.w, h:node.h-cut });
+          const cut = randint(MIN, node.h-MIN);
+          next.push({x:node.x,y:node.y,w:node.w,h:cut});
+          next.push({x:node.x,y:node.y+cut,w:node.w,h:node.h-cut});
         } else next.push(node);
       } else next.push(node);
     }
-    leaves.length = 0; leaves.push(...next);
+    leaves.length=0; leaves.push(...next);
   }
 
-  // 각 leaf 안에 방을 카브
   for (const leaf of leaves) {
-    const rw = randint(4, Math.max(4, leaf.w - 2));
-    const rh = randint(3, Math.max(3, leaf.h - 2));
-    const rx = leaf.x + randint(0, Math.max(0, leaf.w - rw - 1));
-    const ry = leaf.y + randint(0, Math.max(0, leaf.h - rh - 1));
-    const room = { x:rx, y:ry, w:rw, h:rh, cx:Math.floor(rx+rw/2), cy:Math.floor(ry+rh/2) };
-    for (let y = ry; y < ry+rh; y++)
-      for (let x = rx; x < rx+rw; x++)
-        if (x>0 && x<W-1 && y>0 && y<H-1) map[key(x,y)] = TILE.FLOOR;
+    const rw = randint(4, Math.max(4, leaf.w-2));
+    const rh = randint(3, Math.max(3, leaf.h-2));
+    const rx = leaf.x + randint(0, Math.max(0, leaf.w-rw-1));
+    const ry = leaf.y + randint(0, Math.max(0, leaf.h-rh-1));
+    const room = { x:rx,y:ry,w:rw,h:rh, cx:Math.floor(rx+rw/2), cy:Math.floor(ry+rh/2) };
+    for (let y=ry; y<ry+rh; y++)
+      for (let x=rx; x<rx+rw; x++)
+        if (x>0&&x<W-1&&y>0&&y<H-1) map[key(x,y)] = TILE.FLOOR;
     rooms.push(room);
   }
 
-  // 방들을 복도로 연결 (가까운 순)
-  for (let i = 1; i < rooms.length; i++) {
-    const a = rooms[i], b = rooms[i-1];
-    carveCorridor(a.cx, a.cy, b.cx, b.cy);
-  }
-  // 추가 루프 몇 개 (탐험 재미)
-  for (let i = 0; i < 2 && rooms.length > 2; i++) {
-    const a = choice(rooms), b = choice(rooms);
-    if (a !== b) carveCorridor(a.cx, a.cy, b.cx, b.cy);
+  for (let i=1; i<rooms.length; i++) carveCorridor(rooms[i].cx,rooms[i].cy,rooms[i-1].cx,rooms[i-1].cy);
+  for (let i=0; i<2 && rooms.length>2; i++) {
+    const a=choice(rooms), b=choice(rooms);
+    if (a!==b) carveCorridor(a.cx,a.cy,b.cx,b.cy);
   }
 
-  // 플레이어 배치 (첫 방)
   player.x = rooms[0].cx; player.y = rooms[0].cy;
 
-  // 계단 배치 (가장 먼 방)
+  // 계단 = 가장 먼 방
   let far = rooms[0], best = -1;
   for (const r of rooms) {
-    const d = Math.abs(r.cx - player.x) + Math.abs(r.cy - player.y);
-    if (d > best) { best = d; far = r; }
+    const d = Math.abs(r.cx-player.x)+Math.abs(r.cy-player.y);
+    if (d > best) { best=d; far=r; }
   }
-  stairs = { x: far.cx, y: far.cy };
-  map[key(stairs.x, stairs.y)] = TILE.STAIRS;
+  stairs = { x:far.cx, y:far.cy };
+  map[key(stairs.x,stairs.y)] = TILE.STAIRS;
 
-  // 몬스터 배치 (난이도는 depth에 비례)
-  const pool = MONSTERS.filter(m => m.minDepth <= depth);
-  const monCount = 3 + depth + rnd(3);
-  for (let i = 0; i < monCount; i++) {
-    const r = choice(rooms);
-    if (r === rooms[0]) continue;            // 시작 방엔 안 둠
-    const x = randint(r.x, r.x+r.w-1), y = randint(r.y, r.y+r.h-1);
-    if (map[key(x,y)] !== TILE.FLOOR || entityAt(x,y)) continue;
-    // 깊을수록 강한 적 비중 증가
-    const tier = pool[Math.min(pool.length-1, rnd(pool.length) )];
-    spawnMonster(tier, x, y);
+  const isBoss = (depth % 5 === 0);
+
+  if (isBoss) {
+    spawnBoss(far);                       // 보스는 계단 방 수호
+    // 보스층엔 잡몹 조금만
+    placeMonsters(rooms, 2 + rnd(2));
+  } else {
+    placeMonsters(rooms, 3 + depth + rnd(3));
+    // 3층마다 상점 방 배치
+    if (depth % 3 === 0) {
+      const sr = rooms.find(r => r!==rooms[0] && r!==far) || rooms[0];
+      shopPos = { x:sr.cx, y:sr.cy };
+      map[key(shopPos.x, shopPos.y)] = TILE.SHOP;
+    }
   }
 
-  // 아이템 배치
-  const itemCount = 2 + rnd(3);
-  for (let i = 0; i < itemCount; i++) {
+  // 아이템
+  for (let i=0; i<2+rnd(3); i++) {
     const r = choice(rooms);
-    const x = randint(r.x, r.x+r.w-1), y = randint(r.y, r.y+r.h-1);
-    if (map[key(x,y)] !== TILE.FLOOR || itemAt(x,y)) continue;
-    items.push(rollItem(x, y));
+    const x = randint(r.x,r.x+r.w-1), y = randint(r.y,r.y+r.h-1);
+    if (map[key(x,y)]!==TILE.FLOOR || itemAt(x,y)) continue;
+    items.push(rollItem(x,y));
   }
-  // 금화는 좀 더 흔하게
-  for (let i = 0; i < 3 + rnd(3); i++) {
+  for (let i=0; i<3+rnd(3); i++) {
     const r = choice(rooms);
-    const x = randint(r.x, r.x+r.w-1), y = randint(r.y, r.y+r.h-1);
-    if (map[key(x,y)] !== TILE.FLOOR || itemAt(x,y)) continue;
-    items.push({ type:'gold', x, y, amount: randint(2, 8) * depth });
+    const x = randint(r.x,r.x+r.w-1), y = randint(r.y,r.y+r.h-1);
+    if (map[key(x,y)]!==TILE.FLOOR || itemAt(x,y)) continue;
+    items.push({ type:'gold', x, y, amount: randint(2,8)*depth });
   }
 
   computeFOV();
 }
 
-function carveCorridor(x1, y1, x2, y2) {
-  let x = x1, y = y1;
-  if (Math.random() < 0.5) {
-    while (x !== x2) { map[key(x,y)] = map[key(x,y)]===TILE.WALL?TILE.FLOOR:map[key(x,y)]; x += Math.sign(x2-x); }
-    while (y !== y2) { map[key(x,y)] = map[key(x,y)]===TILE.WALL?TILE.FLOOR:map[key(x,y)]; y += Math.sign(y2-y); }
-  } else {
-    while (y !== y2) { map[key(x,y)] = map[key(x,y)]===TILE.WALL?TILE.FLOOR:map[key(x,y)]; y += Math.sign(y2-y); }
-    while (x !== x2) { map[key(x,y)] = map[key(x,y)]===TILE.WALL?TILE.FLOOR:map[key(x,y)]; x += Math.sign(x2-x); }
+function placeMonsters(rooms, count) {
+  const pool = MONSTERS.filter(m => m.minDepth <= depth);
+  for (let i=0; i<count; i++) {
+    const r = choice(rooms);
+    if (r === rooms[0]) continue;
+    const x = randint(r.x,r.x+r.w-1), y = randint(r.y,r.y+r.h-1);
+    if (map[key(x,y)]!==TILE.FLOOR || entityAt(x,y)) continue;
+    spawnMonster(choice(pool), x, y);
   }
 }
 
-function rollItem(x, y) {
+function carveCorridor(x1,y1,x2,y2) {
+  let x=x1, y=y1;
+  const dig = () => { if (map[key(x,y)]===TILE.WALL) map[key(x,y)]=TILE.FLOOR; };
+  if (Math.random()<0.5) {
+    while (x!==x2){ dig(); x+=Math.sign(x2-x); }
+    while (y!==y2){ dig(); y+=Math.sign(y2-y); }
+  } else {
+    while (y!==y2){ dig(); y+=Math.sign(y2-y); }
+    while (x!==x2){ dig(); x+=Math.sign(x2-x); }
+  }
+  dig();
+}
+
+function rollItem(x,y) {
   const roll = Math.random();
   if (roll < 0.45) return { type:'potion', x, y };
   if (roll < 0.75) {
-    const w = choice(WEAPONS.filter(w => w.min <= depth + 2)) || WEAPONS[0];
+    const w = choice(WEAPONS.filter(w=>w.min<=depth+2)) || WEAPONS[0];
     return { type:'weapon', x, y, data:w };
   }
-  const a = choice(ARMORS.filter(a => a.min <= depth + 2)) || ARMORS[0];
+  const a = choice(ARMORS.filter(a=>a.min<=depth+2)) || ARMORS[0];
   return { type:'armor', x, y, data:a };
 }
 
 function spawnMonster(tier, x, y) {
-  entities.push({
-    ...tier,
-    hp: tier.hp, maxHp: tier.hp,
-    x, y, isMonster: true,
-    atk: [...tier.atk],
-  });
+  entities.push({ ...tier, hp:tier.hp, maxHp:tier.hp, x, y, isMonster:true, atk:[...tier.atk] });
 }
 
-// ===================== 시야 (그림자 캐스팅 간이판) =====================
+function spawnBoss(room) {
+  const idx = Math.min(BOSSES.length-1, Math.floor(depth/5)-1);
+  const b = BOSSES[idx];
+  // 계단 옆 빈 칸
+  let bx = room.cx, by = room.cy-1;
+  if (!walkable(bx,by)) { bx = room.cx+1; by = room.cy; }
+  if (!walkable(bx,by)) { bx = room.cx; by = room.cy; }
+  entities.push({
+    name:b.name, ch:b.ch, color:b.color, isMonster:true, isBoss:true,
+    hp: 50+depth*12, maxHp: 50+depth*12,
+    atk: [depth+5, depth+10], def: Math.floor(depth/2),
+    xp: 60*Math.floor(depth/5), regen: 2,
+    x:bx, y:by,
+  });
+  setTimeout(()=>log(`⚠ B${depth}층의 수호자 <b>${b.name}</b>이(가) 기다린다!`,'boss'), 50);
+}
+
+// ===================== 시야 =====================
 function computeFOV() {
   visible.fill(0);
-  const R = 7;
-  const px = player.x, py = player.y;
-  visible[key(px,py)] = 1; seen[key(px,py)] = 1;
-  // 360도 광선 투사
-  for (let a = 0; a < 360; a += 2) {
-    const rad = a * Math.PI / 180;
-    const dx = Math.cos(rad), dy = Math.sin(rad);
-    let fx = px + 0.5, fy = py + 0.5;
-    for (let r = 0; r < R; r++) {
-      fx += dx; fy += dy;
-      const ix = Math.floor(fx), iy = Math.floor(fy);
-      if (ix < 0 || iy < 0 || ix >= W || iy >= H) break;
-      visible[key(ix,iy)] = 1; seen[key(ix,iy)] = 1;
-      if (map[key(ix,iy)] === TILE.WALL) break;   // 벽이 빛 차단
+  const R = 7, px=player.x, py=player.y;
+  visible[key(px,py)]=1; seen[key(px,py)]=1;
+  for (let a=0; a<360; a+=2) {
+    const rad=a*Math.PI/180, dx=Math.cos(rad), dy=Math.sin(rad);
+    let fx=px+0.5, fy=py+0.5;
+    for (let r=0; r<R; r++) {
+      fx+=dx; fy+=dy;
+      const ix=Math.floor(fx), iy=Math.floor(fy);
+      if (ix<0||iy<0||ix>=W||iy>=H) break;
+      visible[key(ix,iy)]=1; seen[key(ix,iy)]=1;
+      if (map[key(ix,iy)]===TILE.WALL) break;
     }
   }
 }
 
-// ===================== 조회 헬퍼 =====================
-function entityAt(x, y) { return entities.find(e => e.hp > 0 && e.x === x && e.y === y); }
-function itemAt(x, y) { return items.find(i => i.x === x && i.y === y); }
-function walkable(x, y) {
-  if (x < 0 || y < 0 || x >= W || y >= H) return false;
-  return map[key(x,y)] !== TILE.WALL;
+// ===================== 조회 =====================
+function entityAt(x,y){ return entities.find(e=>e.hp>0 && e.x===x && e.y===y); }
+function itemAt(x,y){ return items.find(i=>i.x===x && i.y===y); }
+function walkable(x,y){ if(x<0||y<0||x>=W||y>=H) return false; return map[key(x,y)]!==TILE.WALL; }
+function nearestVisibleMonster(maxRange) {
+  let best=null, bd=1e9;
+  for (const m of entities) {
+    if (m.hp<=0 || !visible[key(m.x,m.y)]) continue;
+    const d = Math.abs(m.x-player.x)+Math.abs(m.y-player.y);
+    if (d<=maxRange && d<bd) { bd=d; best=m; }
+  }
+  return best;
 }
 
 // ===================== 전투 =====================
-function rollDmg(range) { return randint(range[0], range[1]); }
+const rollDmg = (range) => randint(range[0], range[1]);
 
-function playerAttack(mon) {
-  const dmg = Math.max(1, rollDmg(player.atk) - mon.def);
+function hitMonster(mon, dmg, label) {
   mon.hp -= dmg;
-  log(`${mon.name}에게 <b>${dmg}</b> 피해!`, 'dmg');
-  if (mon.hp <= 0) {
-    log(`${mon.name} 처치! (+${mon.xp} EXP)`, 'good');
-    gainXp(mon.xp);
-    kills++;
-    if (Math.random() < 0.25) items.push({ type:'gold', x:mon.x, y:mon.y, amount: randint(3,10)*depth });
+  log(`${mon.name}에게 ${label||''}<b>${dmg}</b> 피해!`, mon.isBoss?'boss':'dmg');
+  if (mon.hp <= 0) killMonster(mon);
+}
+function killMonster(mon) {
+  log(`${mon.name} 처치! (+${mon.xp} EXP)`, 'good');
+  gainXp(mon.xp);
+  kills++;
+  if (mon.isBoss) {
+    // 보스 보상
+    player.gold += 50*depth;
+    items.push({ type:'gold', x:mon.x, y:mon.y, amount: 30*depth });
+    const w = choice(WEAPONS.filter(w=>w.min<=depth+3)) || WEAPONS[WEAPONS.length-1];
+    items.push({ type:'weapon', x:mon.x, y:clamp(mon.y+1,1,H-2), data:w });
+    log(`👑 ${mon.name}을(를) 쓰러뜨렸다! 막대한 보상 획득!`, 'boss');
+  } else if (Math.random()<0.25) {
+    items.push({ type:'gold', x:mon.x, y:mon.y, amount: randint(3,10)*depth });
   }
 }
 
+function playerAttack(mon) {
+  const dmg = Math.max(1, rollDmg(player.atk) - mon.def);
+  hitMonster(mon, dmg);
+}
 function monsterAttack(mon) {
   const dmg = Math.max(1, rollDmg(mon.atk) - player.def);
   player.hp -= dmg;
-  log(`${mon.name}이(가) <b>${dmg}</b> 피해를 입혔다!`, 'dmg');
+  log(`${mon.name}이(가) <b>${dmg}</b> 피해!`, mon.isBoss?'boss':'dmg');
   if (player.hp <= 0) die();
 }
 
@@ -433,243 +471,400 @@ function gainXp(amount) {
   while (player.xp >= player.xpNext) {
     player.xp -= player.xpNext;
     player.level++;
-    player.maxHp += 5;
-    player.hp = player.maxHp;
+    player.maxHp += 5; player.hp = player.maxHp;
     player.baseAtk = [player.baseAtk[0]+1, player.baseAtk[1]+1];
-    player.xpNext = Math.floor(player.xpNext * 1.5);
+    if (player.maxMana > 0) { player.maxMana += 3; player.mana = player.maxMana; }
+    player.xpNext = Math.floor(player.xpNext*1.5);
     recalcStats();
-    log(`레벨 업! Lv.${player.level} (HP 회복)`, 'warn');
+    log(`레벨 업! Lv.${player.level} (HP/MP 회복)`, 'warn');
   }
 }
-
 function recalcStats() {
   player.atk = [...player.baseAtk];
   player.def = player.baseDef;
-  if (player.weapon) { player.atk[0]+=player.weapon.bonus[0]; player.atk[1]+=player.weapon.bonus[1]; }
+  if (player.weapon){ player.atk[0]+=player.weapon.bonus[0]; player.atk[1]+=player.weapon.bonus[1]; }
   if (player.armor) player.def += player.armor.def;
 }
 
-// ===================== 입력 처리 / 턴 =====================
-function tryMove(dx, dy) {
-  if (gameOver) return;
-  const nx = player.x + dx, ny = player.y + dy;
-  const mon = entityAt(nx, ny);
-  if (mon) { playerAttack(mon); endTurn(); return; }
-  if (!walkable(nx, ny)) return;
-  player.x = nx; player.y = ny;
-  pickup();
-  if (map[key(nx,ny)] === TILE.STAIRS) descend();
-  endTurn();
+// ===================== 스킬 =====================
+function useSkill() {
+  if (gameOver || paused) return;
+  const sk = player.skill;
+  if (player.skillCd > 0) { log(`${sk.name} 재사용 대기 ${player.skillCd}턴`, 'warn'); return; }
+  if (player.mana < sk.cost) { log('마나가 부족하다!', 'warn'); return; }
+
+  let used = false;
+  if (player.classId === 'warrior') {
+    // 인접 적 중 하나에게 3배
+    let target=null;
+    for (const [dx,dy] of [[0,-1],[0,1],[-1,0],[1,0]]) { const m=entityAt(player.x+dx,player.y+dy); if(m){target=m;break;} }
+    if (!target) { log('주변에 적이 없다.', 'info'); return; }
+    const dmg = Math.max(1, rollDmg(player.atk)*3 - target.def);
+    log('💥 강타!', 'magic');
+    hitMonster(target, dmg);
+    used = true;
+  } else if (player.classId === 'archer') {
+    const t = nearestVisibleMonster(sk.range);
+    if (!t) { log('사거리 내 적이 없다.', 'info'); return; }
+    const dx = Math.sign(t.x-player.x), dy = Math.sign(t.y-player.y);
+    log('🏹 관통사격!', 'magic');
+    let cx=player.x, cy=player.y, hits=0;
+    for (let r=0; r<sk.range; r++) {
+      cx+=dx; cy+=dy;
+      if (!walkable(cx,cy)) break;
+      const m = entityAt(cx,cy);
+      if (m) { hitMonster(m, Math.max(1, rollDmg(player.atk)*1.5|0 - m.def)); hits++; }
+    }
+    if (!hits) hitMonster(t, Math.max(1, rollDmg(player.atk)*1.5|0 - t.def));
+    used = true;
+  } else if (player.classId === 'mage') {
+    const t = nearestVisibleMonster(sk.range);
+    if (!t) { log('시야 내 적이 없다.', 'info'); return; }
+    log('🔥 화염구!', 'magic');
+    const base = rollDmg(player.atk)*2;
+    for (const m of [...entities]) {
+      if (m.hp<=0) continue;
+      const d = Math.abs(m.x-t.x)+Math.abs(m.y-t.y);
+      if (d<=1) hitMonster(m, Math.max(1, (m===t?base:base*0.6|0) - m.def), m===t?'':'화염 ');
+    }
+    used = true;
+  } else if (player.classId === 'rogue') {
+    const t = nearestVisibleMonster(sk.range);
+    if (!t) { log('대상이 없다.', 'info'); return; }
+    // 적 옆 빈 칸으로 순간이동
+    let moved=false;
+    for (const [dx,dy] of [[0,-1],[0,1],[-1,0],[1,0]]) {
+      const nx=t.x+dx, ny=t.y+dy;
+      if (walkable(nx,ny) && !entityAt(nx,ny)) { player.x=nx; player.y=ny; moved=true; break; }
+    }
+    log('🗡️ 암습!', 'magic');
+    const dmg = Math.max(1, (rollDmg(player.atk)*2.5|0) - t.def);
+    hitMonster(t, dmg);
+    if (moved) computeFOV();
+    used = true;
+  }
+
+  if (used) {
+    player.mana -= sk.cost;
+    player.skillCd = sk.cd;
+    endTurn();
+  }
 }
 
-function wait() { if (!gameOver) endTurn(); }
+// ===================== 이동 / 턴 =====================
+function tryMove(dx,dy) {
+  if (gameOver || paused) return;
+  const nx=player.x+dx, ny=player.y+dy;
+  const mon = entityAt(nx,ny);
+  if (mon) { playerAttack(mon); endTurn(); return; }
+  if (!walkable(nx,ny)) return;
+  player.x=nx; player.y=ny;
+  pickup();
+  const t = map[key(nx,ny)];
+  if (t === TILE.STAIRS) { descend(); return; }
+  if (t === TILE.SHOP) { openShop(); render(); return; }
+  endTurn();
+}
+function wait(){ if(!gameOver && !paused) endTurn(); }
 
 function pickup() {
   const it = itemAt(player.x, player.y);
   if (!it) return;
-  if (it.type === 'gold') {
-    player.gold += it.amount;
-    log(`금화 ${it.amount}개 획득.`, 'good');
-  } else if (it.type === 'potion') {
-    player.potions++;
-    log('치유 물약을 주웠다. (Q로 사용)', 'info');
-  } else if (it.type === 'weapon') {
+  if (it.type==='gold') { player.gold += it.amount; log(`금화 ${it.amount} 획득.`,'good'); }
+  else if (it.type==='potion') { player.potions++; log('치유 물약 획득. (Q)','info'); }
+  else if (it.type==='weapon') {
     const cur = player.weapon ? player.weapon.bonus[1] : 0;
-    if (it.data.bonus[1] >= cur) {
-      player.weapon = it.data; recalcStats();
-      log(`${it.data.name} 장착! (공격력 상승)`, 'good');
-    } else {
-      log(`${it.data.name}를 봤지만 지금 무기가 더 좋다.`, 'info');
-      return; // 안 줍고 남겨둠
-    }
-  } else if (it.type === 'armor') {
+    if (it.data.bonus[1] >= cur) { player.weapon=it.data; recalcStats(); log(`${it.data.name} 장착!`,'good'); }
+    else { log(`${it.data.name}(현재 무기가 더 좋음)`,'info'); return; }
+  } else if (it.type==='armor') {
     const cur = player.armor ? player.armor.def : 0;
-    if (it.data.def >= cur) {
-      player.armor = it.data; recalcStats();
-      log(`${it.data.name} 장착! (방어력 상승)`, 'good');
-    } else {
-      log(`${it.data.name}를 봤지만 지금 갑옷이 더 좋다.`, 'info');
-      return;
-    }
+    if (it.data.def >= cur) { player.armor=it.data; recalcStats(); log(`${it.data.name} 장착!`,'good'); }
+    else { log(`${it.data.name}(현재 갑옷이 더 좋음)`,'info'); return; }
   }
-  items.splice(items.indexOf(it), 1);
+  items.splice(items.indexOf(it),1);
 }
 
 function drinkPotion() {
-  if (gameOver) return;
-  if (player.potions <= 0) { log('물약이 없다!', 'warn'); return; }
-  if (player.hp >= player.maxHp) { log('이미 체력이 가득하다.', 'info'); return; }
+  if (gameOver || paused) return;
+  if (player.potions<=0){ log('물약이 없다!','warn'); return; }
+  if (player.hp>=player.maxHp){ log('이미 체력이 가득하다.','info'); return; }
   player.potions--;
-  const heal = Math.floor(player.maxHp * 0.5);
-  player.hp = clamp(player.hp + heal, 0, player.maxHp);
-  log(`물약을 마셨다. HP +${heal}`, 'good');
+  const heal = Math.floor(player.maxHp*0.5);
+  player.hp = clamp(player.hp+heal, 0, player.maxHp);
+  log(`물약을 마셨다. HP +${heal}`,'good');
   endTurn();
 }
 
 function descend() {
   depth++;
+  if (depth > MAX_DEPTH) { win(); return; }
   log(`B${depth}층으로 내려간다...`, 'warn');
   genDungeon();
+  render();
 }
 
-// 몬스터 차례: BFS 없이 간단한 추적 AI
 function monstersAct() {
   for (const mon of entities) {
-    if (mon.hp <= 0) continue;
-    if (mon.regen && mon.hp < mon.maxHp && Math.random()<0.5) mon.hp = Math.min(mon.maxHp, mon.hp+mon.regen);
-    const dist = Math.abs(mon.x - player.x) + Math.abs(mon.y - player.y);
-    if (dist === 1) { monsterAttack(mon); continue; }     // 인접 → 공격
-    if (gameOver) return;
-
-    // 시야 안(보이는 곳)일 때만 추적, 박쥐는 불규칙
-    const seesPlayer = visible[key(mon.x, mon.y)];
-    let dx = 0, dy = 0;
-    if (mon.erratic && Math.random() < 0.5) {
-      dx = rnd(3)-1; dy = rnd(3)-1;
-    } else if (seesPlayer && dist < 9) {
-      dx = Math.sign(player.x - mon.x);
-      dy = Math.sign(player.y - mon.y);
-      // 대각선 막히면 한 축으로
-      if (dx && dy && !walkable(mon.x+dx, mon.y+dy)) {
-        if (walkable(mon.x+dx, mon.y)) dy = 0; else dx = 0;
-      }
-    } else continue; // 가만히
-
-    const nx = mon.x+dx, ny = mon.y+dy;
-    if ((nx===player.x && ny===player.y)) { monsterAttack(mon); continue; }
-    if (walkable(nx,ny) && !entityAt(nx,ny)) { mon.x = nx; mon.y = ny; }
+    if (mon.hp<=0) continue;
+    if (mon.regen && mon.hp<mon.maxHp && Math.random()<0.5) mon.hp=Math.min(mon.maxHp,mon.hp+mon.regen);
+    const dist = Math.abs(mon.x-player.x)+Math.abs(mon.y-player.y);
+    if (dist===1) { monsterAttack(mon); if(gameOver) return; continue; }
+    const sees = visible[key(mon.x,mon.y)];
+    let dx=0, dy=0;
+    if (mon.erratic && Math.random()<0.5) { dx=rnd(3)-1; dy=rnd(3)-1; }
+    else if (sees && dist < (mon.isBoss?14:9)) {
+      dx=Math.sign(player.x-mon.x); dy=Math.sign(player.y-mon.y);
+      if (dx&&dy&&!walkable(mon.x+dx,mon.y+dy)) { if(walkable(mon.x+dx,mon.y)) dy=0; else dx=0; }
+    } else continue;
+    const nx=mon.x+dx, ny=mon.y+dy;
+    if (nx===player.x&&ny===player.y) { monsterAttack(mon); if(gameOver) return; continue; }
+    if (walkable(nx,ny)&&!entityAt(nx,ny)) { mon.x=nx; mon.y=ny; }
   }
 }
 
 function endTurn() {
+  turnCount++;
+  if (player.skillCd > 0) player.skillCd--;
+  if (player.maxMana > 0 && turnCount%3===0 && player.mana<player.maxMana) player.mana++;
   monstersAct();
-  entities = entities.filter(e => e.hp > 0);
+  entities = entities.filter(e=>e.hp>0);
   computeFOV();
   render();
 }
 
-// ===================== 렌더링 =====================
+// ===================== 렌더 =====================
 const board = document.getElementById('board');
 function render() {
   let html = '';
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const k = key(x, y);
-      const vis = visible[k], sn = seen[k];
+  for (let y=0; y<H; y++) {
+    for (let x=0; x<W; x++) {
+      const k=key(x,y), vis=visible[k], sn=seen[k];
       if (!sn) { html += `<span> </span>`; continue; }
-
-      // 우선순위: 플레이어 > 몬스터(보일때) > 아이템(보일때) > 타일
-      if (x === player.x && y === player.y) {
-        html += colored(GLYPH.player.ch, GLYPH.player.color); continue;
-      }
-      const mon = vis ? entityAt(x, y) : null;
+      if (x===player.x && y===player.y) { html += colored(GLYPH.player.ch, GLYPH.player.color); continue; }
+      const mon = vis ? entityAt(x,y) : null;
       if (mon) { html += colored(mon.ch, mon.color); continue; }
-      const it = vis ? itemAt(x, y) : null;
-      if (it) { html += colored(glyphForItem(it).ch, glyphForItem(it).color); continue; }
-
-      let g;
-      const t = map[k];
-      if (t === TILE.WALL) g = GLYPH.wall;
-      else if (t === TILE.STAIRS) g = GLYPH.stairs;
-      else g = GLYPH.floor;
-      html += colored(g.ch, vis ? g.color : g.dim);
+      const it = vis ? itemAt(x,y) : null;
+      if (it) { const g=glyphForItem(it); html += colored(g.ch,g.color); continue; }
+      let g; const t=map[k];
+      if (t===TILE.WALL) g=GLYPH.wall;
+      else if (t===TILE.STAIRS) g=GLYPH.stairs;
+      else if (t===TILE.SHOP) g=GLYPH.shop;
+      else g=GLYPH.floor;
+      html += colored(g.ch, vis?g.color:g.dim);
     }
     html += '\n';
   }
   board.innerHTML = html;
   updateHUD();
 }
-
-function glyphForItem(it) {
-  if (it.type === 'gold') return GLYPH.gold;
-  if (it.type === 'potion') return GLYPH.potion;
-  if (it.type === 'weapon') return GLYPH.weapon;
+function glyphForItem(it){
+  if(it.type==='gold')return GLYPH.gold;
+  if(it.type==='potion')return GLYPH.potion;
+  if(it.type==='weapon')return GLYPH.weapon;
   return GLYPH.armor;
 }
-function colored(ch, color) {
-  const safe = ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '&' ? '&amp;' : ch;
+function colored(ch,color){
+  const safe = ch==='<'?'&lt;':ch==='>'?'&gt;':ch==='&'?'&amp;':ch;
   return `<span style="color:${color}">${safe}</span>`;
 }
-
 function updateHUD() {
-  document.getElementById('s-depth').textContent = 'B' + depth + '층';
-  document.getElementById('s-hp').textContent = `${Math.max(0,player.hp)}/${player.maxHp}`;
-  document.getElementById('bar-hp').style.width = clamp(player.hp/player.maxHp*100,0,100) + '%';
-  document.getElementById('s-xp').textContent = 'Lv.' + player.level;
-  document.getElementById('bar-xp').style.width = (player.xp/player.xpNext*100) + '%';
-  document.getElementById('s-atk').textContent = player.atk[0]+'-'+player.atk[1];
-  document.getElementById('s-def').textContent = player.def;
-  document.getElementById('s-gold').textContent = player.gold;
-  document.getElementById('s-pot').textContent = player.potions;
-  document.getElementById('s-kill').textContent = kills;
+  const $ = (id)=>document.getElementById(id);
+  $('s-class').textContent = player.className;
+  $('s-depth').textContent = 'B'+depth+'층';
+  $('s-hp').textContent = `${Math.max(0,player.hp)}/${player.maxHp}`;
+  $('bar-hp').style.width = clamp(player.hp/player.maxHp*100,0,100)+'%';
+  const mpWrap = $('mp-wrap');
+  if (player.maxMana>0) {
+    mpWrap.style.display='';
+    $('s-mp').textContent = `${player.mana}/${player.maxMana}`;
+    $('bar-mp').style.width = (player.mana/player.maxMana*100)+'%';
+  } else mpWrap.style.display='none';
+  $('s-xp').textContent = 'Lv.'+player.level;
+  $('bar-xp').style.width = (player.xp/player.xpNext*100)+'%';
+  $('s-atk').textContent = player.atk[0]+'-'+player.atk[1];
+  $('s-def').textContent = player.def;
+  $('s-gold').textContent = player.gold;
+  $('s-pot').textContent = player.potions;
+  $('s-kill').textContent = kills;
+  $('s-skname').textContent = player.skill.name;
+  $('s-skcd').textContent = player.skillCd>0 ? `${player.skillCd}턴` : '준비됨';
+  $('s-skdesc').textContent = player.skill.desc + (player.skill.cost?` (MP ${player.skill.cost})`:'');
 }
 
 // ===================== 로그 =====================
 const logEl = document.getElementById('log');
 function log(msg, type) {
   const div = document.createElement('div');
-  if (type) div.className = 'log-' + type;
+  if (type) div.className = 'log-'+type;
   div.innerHTML = msg;
   logEl.appendChild(div);
   logEl.scrollTop = logEl.scrollHeight;
-  while (logEl.children.length > 50) logEl.removeChild(logEl.firstChild);
+  while (logEl.children.length > 60) logEl.removeChild(logEl.firstChild);
 }
 
-// ===================== 게임 종료/시작 =====================
-function die() {
-  gameOver = true;
-  showOverlay('💀 사망', `B${depth}층에서 쓰러졌다. 처치 ${kills} · 금화 ${player.gold} · Lv.${player.level}`);
+// ===================== 상점 =====================
+const SHOP_STOCK = [
+  { id:'potion', name:'치유 물약', desc:'최대 HP의 50% 회복', cost:15, apply:()=>{ player.potions++; } },
+  { id:'mana',   name:'마나 물약', desc:'MP 가득 회복', cost:12, need:()=>player.maxMana>0, apply:()=>{ player.mana=player.maxMana; } },
+  { id:'hp',     name:'생명의 영약', desc:'최대 HP +8', cost:40, apply:()=>{ player.maxHp+=8; player.hp+=8; } },
+  { id:'sharpen',name:'무기 연마', desc:'공격력 영구 +1', cost:35, apply:()=>{ player.baseAtk=[player.baseAtk[0]+1,player.baseAtk[1]+1]; recalcStats(); } },
+  { id:'armor',  name:'갑옷 강화', desc:'방어력 영구 +1', cost:35, apply:()=>{ player.baseDef+=1; recalcStats(); } },
+];
+function openShop() {
+  paused = true;
+  document.getElementById('shop').classList.add('show');
+  renderShop();
 }
-function showOverlay(title, text) {
-  document.getElementById('ov-title').textContent = title;
-  document.getElementById('ov-text').textContent = text;
-  document.getElementById('overlay').classList.add('show');
+function renderShop() {
+  document.getElementById('shop-gold').textContent = player.gold;
+  const wrap = document.getElementById('shop-items');
+  wrap.innerHTML = '';
+  for (const item of SHOP_STOCK) {
+    if (item.need && !item.need()) continue;
+    const div = document.createElement('div');
+    div.className = 'shop-item';
+    div.innerHTML = `<div class="si-info"><b>${item.name}</b><br><small>${item.desc}</small></div>`;
+    const btn = document.createElement('button');
+    btn.textContent = item.cost + 'G';
+    btn.disabled = player.gold < item.cost;
+    btn.onclick = () => {
+      if (player.gold < item.cost) return;
+      player.gold -= item.cost;
+      item.apply();
+      log(`${item.name} 구매!`, 'good');
+      renderShop(); updateHUD();
+    };
+    div.appendChild(btn);
+    wrap.appendChild(div);
+  }
 }
-
-function startGame() {
-  document.getElementById('overlay').classList.remove('show');
-  player = newPlayer();
-  depth = 1; gameOver = false; kills = 0;
-  logEl.innerHTML = '';
-  recalcStats();
-  genDungeon();
-  log('심연으로 발을 들였다. 살아남아 더 깊이 내려가라.', 'info');
+function closeShop() {
+  document.getElementById('shop').classList.remove('show');
+  paused = false;
+  // 상점 칸에서 비켜서도록(다시 안 열리게) — 상점은 그대로 두고 플레이 계속
+  board.focus();
   render();
 }
 
-// ===================== 키 입력 =====================
-window.addEventListener('keydown', (e) => {
+// ===================== 점수 기록 =====================
+function loadScores() { try { return JSON.parse(localStorage.getItem('dungeon_scores')||'[]'); } catch { return []; } }
+function saveScore(entry) {
+  const s = loadScores();
+  s.push(entry);
+  s.sort((a,b)=> b.depth-a.depth || b.kills-a.kills || b.gold-a.gold);
+  localStorage.setItem('dungeon_scores', JSON.stringify(s.slice(0,5)));
+}
+function scoresHTML() {
+  const s = loadScores();
+  if (!s.length) return '<div style="color:#667">아직 기록이 없다.</div>';
+  let h = '<div style="color:var(--accent);margin-bottom:6px;">🏆 최고 기록</div>';
+  for (const e of s) h += `<div class="sc-row"><span>${e.cls} · B${e.depth}층</span><span>처치 ${e.kills} · ${e.gold}G</span></div>`;
+  return h;
+}
+
+// ===================== 종료 / 시작 =====================
+function die() {
+  gameOver = true;
+  saveScore({ cls:player.className, depth, kills, gold:player.gold, lv:player.level });
+  showEndOverlay('💀 사망', `B${depth}층에서 쓰러졌다.<br>처치 ${kills} · 금화 ${player.gold} · Lv.${player.level}`);
+}
+function win() {
+  gameOver = true;
+  saveScore({ cls:player.className, depth:MAX_DEPTH, kills, gold:player.gold, lv:player.level });
+  showEndOverlay('🎉 던전 정복!', `심연의 마왕을 물리치고 던전을 정복했다!<br>처치 ${kills} · 금화 ${player.gold} · Lv.${player.level}`);
+}
+function showEndOverlay(title, text) {
+  const ov = document.getElementById('overlay');
+  document.getElementById('ov-title').innerHTML = title;
+  document.getElementById('ov-text').innerHTML = text + '<br><br>직업을 골라 다시 도전하라.';
+  document.getElementById('scores').innerHTML = scoresHTML();
+  buildClassGrid();
+  ov.classList.add('show');
+}
+
+function buildClassGrid() {
+  const grid = document.getElementById('class-grid');
+  grid.innerHTML = '';
+  for (const id in CLASSES) {
+    const c = CLASSES[id];
+    const card = document.createElement('div');
+    card.className = 'class-card';
+    card.innerHTML = `
+      <div class="cc-icon">${c.icon}</div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-stat">
+        HP ${c.hp} · 공격 ${c.atk[0]}-${c.atk[1]}<br>
+        방어 ${c.def} · 마나 ${c.mana}<br>
+        <span style="color:#8df">★ ${c.skill.name}</span><br>
+        <span style="font-size:10px;">${c.skill.desc}</span>
+      </div>`;
+    card.onclick = () => startGame(id);
+    grid.appendChild(card);
+  }
+}
+
+function startGame(classId) {
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('shop').classList.remove('show');
+  paused = false;
+  player = newPlayer(classId);
+  depth = 1; gameOver = false; kills = 0; turnCount = 0;
+  logEl.innerHTML = '';
+  recalcStats();
+  genDungeon();
+  log(`${player.className}(으)로 심연에 발을 들였다. B${MAX_DEPTH}층의 마왕을 노려라!`, 'info');
+  render();
+  board.focus();
+}
+
+// ===================== 입력 =====================
+function handleKey(e) {
+  // 상점 열려있으면 Esc만 처리
+  if (paused) {
+    if (e.key === 'Escape') { closeShop(); e.preventDefault(); }
+    return;
+  }
+  // 오버레이(시작/사망 화면)면 게임키 무시
+  if (document.getElementById('overlay').classList.contains('show')) return;
   if (gameOver) return;
-  const k = e.key.toLowerCase();
+
   let handled = true;
-  switch (k) {
-    case 'arrowup': case 'w': tryMove(0, -1); break;
-    case 'arrowdown': case 's': tryMove(0, 1); break;
-    case 'arrowleft': case 'a': tryMove(-1, 0); break;
-    case 'arrowright': case 'd': tryMove(1, 0); break;
-    case ' ': wait(); break;
+  switch (e.key.toLowerCase()) {
+    case 'arrowup': case 'w': tryMove(0,-1); break;
+    case 'arrowdown': case 's': tryMove(0,1); break;
+    case 'arrowleft': case 'a': tryMove(-1,0); break;
+    case 'arrowright': case 'd': tryMove(1,0); break;
+    case ' ': case 'enter': wait(); break;   // 대기 (Enter도 대기로 통일)
+    case 'e': case 'f': useSkill(); break;
     case 'q': drinkPotion(); break;
     default: handled = false;
   }
   if (handled) e.preventDefault();
-});
+}
+// window/document 양쪽에 걸어 포커스 이슈 방지
+window.addEventListener('keydown', handleKey);
+
+// 보드 클릭 시 포커스(미리보기 iframe 대응)
+board.addEventListener('click', () => board.focus());
 
 // 모바일 버튼
 document.querySelector('.mobile-controls').addEventListener('click', (e) => {
-  const dir = e.target.dataset.dir;
-  if (!dir) return;
-  if (dir === 'up') tryMove(0,-1);
-  else if (dir === 'down') tryMove(0,1);
-  else if (dir === 'left') tryMove(-1,0);
-  else if (dir === 'right') tryMove(1,0);
-  else if (dir === 'wait') wait();
-  else if (dir === 'potion') drinkPotion();
+  const a = e.target.dataset.act; if(!a) return;
+  if (a==='up') tryMove(0,-1);
+  else if (a==='down') tryMove(0,1);
+  else if (a==='left') tryMove(-1,0);
+  else if (a==='right') tryMove(1,0);
+  else if (a==='wait') wait();
+  else if (a==='skill') useSkill();
+  else if (a==='potion') drinkPotion();
 });
 
-document.getElementById('ov-btn').addEventListener('click', startGame);
+document.getElementById('shop-close').addEventListener('click', closeShop);
 
-// 시작!
-startGame();
+// 첫 화면: 직업 선택
+buildClassGrid();
+document.getElementById('scores').innerHTML = scoresHTML();
+try { window.focus(); } catch(e) {}
 </script>
 </body>
 </html>
