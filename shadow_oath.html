@@ -57,7 +57,8 @@ img{display:block;} button{font-family:inherit;cursor:pointer;color:inherit;bord
 .platform{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:180px;height:38px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(139,63,247,.5),rgba(139,63,247,.1) 52%,transparent 72%);filter:blur(2px);}
 #hero-card{height:min(348px,66%);position:relative;}
 #hero-img{height:100%;width:auto;object-fit:contain;-webkit-mask:var(--hero-mask);mask:var(--hero-mask);filter:drop-shadow(0 8px 22px rgba(0,0,0,.7));animation:hfloat 4s ease-in-out infinite;}
-@keyframes hfloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes hfloat{0%,100%{transform:translateY(0) scaleX(-1);}50%{transform:translateY(-6px) scaleX(-1);}}
+@keyframes lfloat{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}}
 #hero-card.hit{animation:ehitL .3s;} @keyframes ehitL{0%,100%{transform:translateX(0);}25%{transform:translateX(10px);}75%{transform:translateX(-10px);}}
 #enemy-sprite{width:230px;height:220px;position:relative;filter:drop-shadow(0 12px 26px rgba(0,0,0,.7));animation:efloat 3.4s ease-in-out infinite;}
 @keyframes efloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-11px);}}
@@ -90,7 +91,7 @@ img{display:block;} button{font-family:inherit;cursor:pointer;color:inherit;bord
 @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}
 #lobby-glow{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(72vh,400px);height:min(72vh,400px);z-index:1;pointer-events:none;background:radial-gradient(circle,rgba(139,63,247,.42),rgba(224,16,70,.1) 46%,transparent 68%);border-radius:50%;mix-blend-mode:screen;animation:breathe 5.5s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:.55;}50%{opacity:1;}}
-#lobby-hero{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);height:min(420px,78%);z-index:3;-webkit-mask:radial-gradient(ellipse 52% 62% at 50% 40%,#000 46%,rgba(0,0,0,.5) 66%,transparent 82%);mask:radial-gradient(ellipse 52% 62% at 50% 40%,#000 46%,rgba(0,0,0,.5) 66%,transparent 82%);filter:drop-shadow(0 14px 30px rgba(0,0,0,.7));animation:hfloat 5s ease-in-out infinite;}
+#lobby-hero{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);height:min(420px,78%);z-index:3;-webkit-mask:radial-gradient(ellipse 52% 62% at 50% 40%,#000 46%,rgba(0,0,0,.5) 66%,transparent 82%);mask:radial-gradient(ellipse 52% 62% at 50% 40%,#000 46%,rgba(0,0,0,.5) 66%,transparent 82%);filter:drop-shadow(0 14px 30px rgba(0,0,0,.7));animation:lfloat 5s ease-in-out infinite;}
 #lobby-plate{position:absolute;left:50%;top:52px;transform:translateX(-50%);z-index:4;text-align:center;pointer-events:none;}
 #lobby-plate .hn{font-family:'Cinzel',serif;font-weight:900;font-size:26px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8),0 0 26px rgba(182,120,255,.7);letter-spacing:.03em;}
 #lobby-plate .ht{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--gold);background:rgba(20,12,38,.7);border:1px solid var(--edge-gold);border-radius:20px;padding:3px 14px;backdrop-filter:blur(6px);}
