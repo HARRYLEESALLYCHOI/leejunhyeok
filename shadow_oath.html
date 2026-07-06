@@ -64,6 +64,10 @@ img{display:block;} button{font-family:inherit;cursor:pointer;color:inherit;bord
 @keyframes efloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-11px);}}
 #enemy-sprite.hit{animation:ehit .34s;} @keyframes ehit{0%,100%{transform:translateX(0);}25%{transform:translateX(14px) rotate(4deg);}75%{transform:translateX(-14px) rotate(-4deg);}}
 #enemy-sprite.dead{animation:edead .8s forwards;} @keyframes edead{to{opacity:0;transform:translateY(24px) scale(.7) rotate(-10deg);filter:brightness(3) blur(4px);}}
+#hero-card.lunge{animation:heroLunge .42s cubic-bezier(.3,0,.2,1);} @keyframes heroLunge{0%{transform:translateX(0);}32%{transform:translateX(72px) translateY(-5px);}55%{transform:translateX(62px);}100%{transform:translateX(0);}}
+.slashfx{position:absolute;z-index:24;width:130px;height:130px;pointer-events:none;background:conic-gradient(from 190deg,transparent 0 38%,rgba(255,255,255,.95) 52%,rgba(182,120,255,.85) 60%,transparent 70%);border-radius:50%;-webkit-mask:radial-gradient(transparent 50%,#000 53%,#000 66%,transparent 70%);mask:radial-gradient(transparent 50%,#000 53%,#000 66%,transparent 70%);animation:slashA .4s forwards;filter:drop-shadow(0 0 8px rgba(182,120,255,.8));}
+.slashfx.skill{width:190px;height:190px;background:conic-gradient(from 190deg,transparent 0 34%,rgba(255,225,140,.95) 50%,rgba(182,120,255,.9) 60%,transparent 72%);filter:drop-shadow(0 0 14px rgba(255,207,63,.9));}
+@keyframes slashA{0%{transform:scale(.4) rotate(-45deg);opacity:0;}28%{opacity:1;}100%{transform:scale(1.35) rotate(28deg);opacity:0;}}
 .dmg{position:absolute;z-index:25;font-family:'Cinzel',serif;font-weight:900;font-size:30px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.9);animation:dpop 1s forwards;}
 .dmg.crit{font-size:44px;color:var(--gold);} .dmg.heal{color:var(--green);} .dmg.mine{color:#ff9ab0;}
 @keyframes dpop{0%{transform:translateY(0) scale(.4);opacity:0;}20%{transform:translateY(-14px) scale(1.15);opacity:1;}70%{transform:translateY(-30px) scale(1);opacity:1;}100%{transform:translateY(-58px) scale(.9);opacity:0;}}
@@ -547,15 +551,21 @@ function playerFlee(){ busy=true; showCommands(); msg(enemy.isBoss?'도망칠 �
 function playerItem(){ if(hero.potions<=0) return; if(hero.hp>=hero.maxHp){ msg('이미 체력이 가득하다.'); return; }
   busy=true; hero.potions--; const heal=Math.round(hero.maxHp*0.45); hero.hp=Math.min(hero.maxHp,hero.hp+heal); refreshHero(); showCommands();
   const c=$('hero-card').getBoundingClientRect(),g=$('game').getBoundingClientRect(); popDmg(c.left-g.left+30,c.top-g.top+40,'+'+heal,'heal'); msg('🧪 물약을 마셨다. HP +'+heal); setTimeout(enemyTurn,750); }
+function heroLunge(){ const hc=$('hero-card'); hc.classList.remove('lunge'); void hc.offsetWidth; hc.classList.add('lunge'); setTimeout(()=>hc.classList.remove('lunge'),440); }
+function slashFX(big){ const r=$('enemy-sprite').getBoundingClientRect(),g=$('game').getBoundingClientRect();
+  const s=document.createElement('div'); s.className='slashfx'+(big?' skill':''); const sz=big?190:130;
+  s.style.left=(r.left-g.left+r.width/2-sz/2)+'px'; s.style.top=(r.top-g.top+r.height/2-sz/2)+'px'; $('game').appendChild(s); setTimeout(()=>s.remove(),440); }
 function doPlayerDamage(atk,mult,mode,text,power){
-  busy=true; msg(text); showCommands();
-  const es=$('enemy-sprite'); es.classList.add('hit'); flash(); shakeIt();
+  busy=true; msg(text); showCommands(); heroLunge();
+  const es=$('enemy-sprite');
   let dmg=Math.round(rollDmg(atk,enemy.def)*mult); const crit=Math.random()<(0.18+eqCrit()); if(crit) dmg=Math.round(dmg*1.6);
-  enemy.hp=Math.max(0,enemy.hp-dmg);
-  const r=es.getBoundingClientRect(),g=$('game').getBoundingClientRect(); popDmg(r.left-g.left+r.width/2-10,r.top-g.top+40,dmg,crit?'crit':'');
-  if(mode==='drain'){ const heal=Math.round(dmg*0.5); hero.hp=Math.min(hero.maxHp,hero.hp+heal); const c=$('hero-card').getBoundingClientRect(); popDmg(c.left-g.left+30,c.top-g.top+40,'+'+heal,'heal'); }
-  setBar('enemy-hp',enemy.hp,enemy.maxHp); $('enemy-hptext').textContent=enemy.hp+'/'+enemy.maxHp; refreshHero();
-  setTimeout(()=>{ es.classList.remove('hit'); if(enemy.hp<=0) enemyDefeated(); else enemyTurn(); },520);
+  setTimeout(()=>{ es.classList.add('hit'); flash(); shakeIt(); slashFX(mode==='skill'||mode==='drain');
+    enemy.hp=Math.max(0,enemy.hp-dmg);
+    const r=es.getBoundingClientRect(),g=$('game').getBoundingClientRect(); popDmg(r.left-g.left+r.width/2-10,r.top-g.top+40,dmg,crit?'crit':'');
+    if(mode==='drain'){ const heal=Math.round(dmg*0.5); hero.hp=Math.min(hero.maxHp,hero.hp+heal); const c=$('hero-card').getBoundingClientRect(); popDmg(c.left-g.left+30,c.top-g.top+40,'+'+heal,'heal'); }
+    setBar('enemy-hp',enemy.hp,enemy.maxHp); $('enemy-hptext').textContent=enemy.hp+'/'+enemy.maxHp; refreshHero();
+  },180);
+  setTimeout(()=>{ es.classList.remove('hit'); if(enemy.hp<=0) enemyDefeated(); else enemyTurn(); },560);
 }
 function enemyTurn(){ if(enemy.hp<=0){ enemyDefeated(); return; } busy=true;
   const strong=enemy.isBoss&&Math.random()<0.35;
